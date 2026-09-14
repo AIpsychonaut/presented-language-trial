@@ -1,0 +1,49 @@
+{
+  "items": [
+    {
+      "item_id": "math_amgm",
+      "pi_k_inject": "tool",
+      "problem": "Positive real numbers x and y satisfy x + y = 10. Find the maximum value of the product xy.",
+      "r_gold": "25",
+      "g_string": "AM-GM inequality",
+      "named_constraint": "AM-GM inequality",
+      "omit_filler": "page slack note."
+    },
+    {
+      "item_id": "math_euclid",
+      "pi_k_inject": "tool",
+      "problem": "Compute gcd(1071, 462). Report a single integer.",
+      "r_gold": "21",
+      "g_string": "Euclidean algorithm",
+      "named_constraint": "Euclidean algorithm",
+      "omit_filler": "unused page slack.."
+    },
+    {
+      "item_id": "math_ie",
+      "pi_k_inject": "tool",
+      "problem": "How many integers from 1 to 60 inclusive are divisible by 2 or by 5? Report a single integer.",
+      "r_gold": "36",
+      "g_string": "inclusion-exclusion principle",
+      "named_constraint": "inclusion-exclusion principle",
+      "omit_filler": "typesetting slack; no method."
+    },
+    {
+      "item_id": "math_telescope",
+      "pi_k_inject": "tool",
+      "problem": "Evaluate the sum from k = 1 to 9 of (1/k - 1/(k+1)). Report the value as a reduced fraction a/b.",
+      "r_gold": "9/10",
+      "g_string": "telescoping series",
+      "named_constraint": "telescoping series",
+      "omit_filler": "margin note unused"
+    },
+    {
+      "item_id": "math_vieta",
+      "pi_k_inject": "tool",
+      "problem": "The quadratic t^2 - 7t + 10 = 0 has roots r and s. Find r + s.",
+      "r_gold": "7",
+      "g_string": "Vieta's formulas",
+      "named_constraint": "Vieta's formulas",
+      "omit_filler": "page slack note."
+    }
+  ]
+}

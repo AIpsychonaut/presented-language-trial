@@ -1,0 +1,63 @@
+{
+  "protocol_version": "v0.1-tag-law",
+  "parent_protocol": "v0",
+  "parent_freeze": "freeze/protocol.json",
+  "SOURCE": "api",
+  "base_url": "https://api.aitklabs.in/v1",
+  "model_id": "openai/gpt-4o",
+  "n_items": 5,
+  "arms": ["omit", "inject"],
+  "grammars": ["optional_v0", "mandatory_structure"],
+  "allele": "tool",
+  "inject_locus": "tool",
+  "pi_k_both_arms": "tool",
+  "call_count": 20,
+  "temperature": 0,
+  "w_channel": "lemma_tag_after_r",
+  "official_w": "xml_w_after_r",
+  "diagnostics": ["text_W_global", "text_W_after_R"],
+  "structure_bits": ["lemma_present_after_r", "lemma_is_none"],
+  "inclusion_rule": "Primary cell scored only on rows where this stamp has omit R=1 and inject R=1. All five items printed including telescope. Telescope stays in the bank.",
+  "system_optional_v0": "You are answering a short contest math item. Write the final answer in <answer>...</answer>. After that closing tag you may fill a structured field with this grammar: <lemma></lemma>. Empty lemma is allowed. Do not omit the answer tags.",
+  "system_mandatory_structure": "You are answering a short contest math item. Write the final answer in <answer>...</answer>. After that closing tag you must output a <lemma>...</lemma> tag. If no specific named theorems were used, state 'None'. Do not omit the answer tags.",
+  "hashes": {
+    "system_optional_v0_sha256": "e4ec29a28c82869bcb566f6edf0797fae2890eb0afabe4c63ca5ec4b6e2262c4",
+    "system_mandatory_structure_sha256": "457f874c37d3e77a37152d9724fb639ffe9e314e77786fad99a6158258003636",
+    "inclusion_rule_sha256": "c7c12b7827e015c5c204ab91ae49e1961f60073445d4e849b65bfb39737c940a",
+    "official_w_sha256": "54593768e5189afad5e1e1dee4ea8459e29e677a5d75a6dfb01a55dc91446dc9",
+    "execution_plan_41_sha256": "201f961676c8c4f2ed3dd265e79d99207ac8006689a15ba8862f5cfb3f379f3f"
+  },
+  "catalog_pin": {
+    "url": "https://api.aitklabs.in/v1/models",
+    "docs": "https://apikeys.in/docs.html",
+    "models_page": "https://apikeys.in/models.html",
+    "id_in_catalog": true
+  },
+  "items": [
+    {
+      "item_id": "math_amgm",
+      "g_string": "AM-GM inequality",
+      "r_gold": "25"
+    },
+    {
+      "item_id": "math_euclid",
+      "g_string": "Euclidean algorithm",
+      "r_gold": "21"
+    },
+    {
+      "item_id": "math_ie",
+      "g_string": "inclusion-exclusion principle",
+      "r_gold": "36"
+    },
+    {
+      "item_id": "math_telescope",
+      "g_string": "telescoping series",
+      "r_gold": "9/10"
+    },
+    {
+      "item_id": "math_vieta",
+      "g_string": "Vieta's formulas",
+      "r_gold": "7"
+    }
+  ]
+}

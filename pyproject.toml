@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "presented-language-trial"
+version = "0.1.0"
+description = "Presented Games and Wired Predicates: omit vs inject of a named method; official W is the named lemma after a correct answer."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "3am Labs" }]
+dependencies = [
+  "openai>=1.40.0",
+  "pytest>=8.0.0",
+  "python-dotenv>=1.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

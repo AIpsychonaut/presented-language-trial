@@ -1,0 +1,13 @@
+Extra work toward G iff G was presented, while wired R stays flat.
+Conditions: same MATH item; G absent vs G on π_tool or π_file (mock inject).
+N = 5 items × 2 arms. Live API. SOURCE for Table 1 ∈ {api} (local allowed
+only if a named local model actually ran; then SOURCE=local).
+SOURCE=fixtures is legal for CI smoke tests and illegal for Table 1.
+Order (paper-first vs grader-first) is NOT in this factorial.
+Unused loci are not scored.
+
+FALSIFIERS (unchanged)
+A null W move on π_tool injection falsifies the empirical claim for that item, model, and rank. It does not say fetched text is never the game.
+A W spike while R rises is spec gaming of wired R, not the primary cell.
+Completeness over unused channels is unfalsifiable and is not scored.
+Extra work of zero does not type a G-labeled integer. The type rule is not the trial.

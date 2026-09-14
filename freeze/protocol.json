@@ -1,0 +1,45 @@
+{
+  "protocol_version": "v0",
+  "SOURCE": "api",
+  "base_url": "https://api.aitklabs.in/v1",
+  "model_id": "openai/gpt-4o",
+  "n_items": 5,
+  "arms": ["omit", "inject"],
+  "inject_locus": "tool",
+  "w_channel": "lemma_tag_after_r",
+  "protocol_sha256": "a1665e88455595291c53fa7f980b8b377c828ade2e596092ef9e1ac93a468c58",
+  "primary_endpoint_sha256": "43c3eb81e89dd8bff398310dc3a610df6caf63186720483f8ba0194a70f940af",
+  "catalog_pin": {
+    "url": "https://api.aitklabs.in/v1/models",
+    "docs": "https://apikeys.in/docs.html",
+    "models_page": "https://apikeys.in/models.html",
+    "id_in_catalog": true
+  },
+  "items": [
+    {
+      "item_id": "math_amgm",
+      "g_string": "AM-GM inequality",
+      "r_gold": "25"
+    },
+    {
+      "item_id": "math_euclid",
+      "g_string": "Euclidean algorithm",
+      "r_gold": "21"
+    },
+    {
+      "item_id": "math_ie",
+      "g_string": "inclusion-exclusion principle",
+      "r_gold": "36"
+    },
+    {
+      "item_id": "math_telescope",
+      "g_string": "telescoping series",
+      "r_gold": "9/10"
+    },
+    {
+      "item_id": "math_vieta",
+      "g_string": "Vieta's formulas",
+      "r_gold": "7"
+    }
+  ]
+}

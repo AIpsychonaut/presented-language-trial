@@ -13,3 +13,13 @@ htmlcov/
 # Internal lab gates — not part of the public artifact
 paper/PANEL_CHECK.md
 freeze/SIGN_OFF.md
+
+# PDF build scratch
+paper/_ref_apart/
+paper/_preview/
+paper/fonts/
+paper/_*.py
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc

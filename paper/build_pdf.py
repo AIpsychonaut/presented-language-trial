@@ -62,6 +62,19 @@ def escape_tex(s: str) -> str:
     return "".join(repl.get(ch, ch) for ch in s)
 
 
+def tex_tt(inner: str) -> str:
+    esc = escape_tex(inner)
+    esc = esc.replace(">", r">\allowbreak{}").replace("/", r"/\allowbreak{}")
+    return r"\texttt{" + esc + "}"
+
+
+def href_url(url: str, label: str | None = None) -> str:
+    shown = label if label is not None else url
+    if shown == url:
+        return r"\href{" + url + r"}{\nolinkurl{" + url + "}}"
+    return r"\href{" + url + "}{" + inline(shown) + "}"
+
+
 def inline(s: str) -> str:
     parts: list[str] = []
     i = 0
@@ -80,14 +93,21 @@ def inline(s: str) -> str:
             if j == -1:
                 parts.append(escape_tex(s[i:]))
                 break
-            parts.append(r"\texttt{" + escape_tex(s[i + 1 : j]) + "}")
+            parts.append(tex_tt(s[i + 1 : j]))
             i = j + 1
             continue
         if s.startswith("[", i):
             m = re.match(r"\[([^\]]+)\]\(([^)]+)\)", s[i:])
             if m:
-                parts.append(r"\href{" + m.group(2) + "}{" + inline(m.group(1)) + "}")
+                parts.append(href_url(m.group(2), m.group(1)))
                 i += m.end()
+                continue
+        if s.startswith("http://", i) or s.startswith("https://", i):
+            m = re.match(r"https?://[^\s\]\)>,]+", s[i:])
+            if m:
+                url = m.group(0).rstrip(".,;:")
+                parts.append(href_url(url))
+                i += len(url)
                 continue
         if s.startswith("**", i):
             j = s.find("**", i + 2)
@@ -127,22 +147,62 @@ def parse_table(lines: list[str], start: int) -> tuple[str, int]:
     for r in rows:
         while len(r) < ncol:
             r.append("")
-    colspec = "l" * ncol
-    if ncol >= 5:
-        colspec = "p{0.11\\textwidth}" + "p{0.11\\textwidth}" * (ncol - 2) + "p{0.22\\textwidth}"
-        if ncol == 4:
-            colspec = "l" + "p{0.42\\textwidth}" + "l" + "p{0.22\\textwidth}"
-        if ncol == 7:
-            colspec = "l" + "c" * 4 + "p{0.28\\textwidth}p{0.18\\textwidth}"
-    out = [r"\begin{center}", r"\small", r"\setlength{\tabcolsep}{3.5pt}", rf"\begin{{tabular}}{{{colspec}}}"]
-    out.append(r"\toprule")
+    if ncol == 7:
+        colspec = r"lcccc>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X"
+        env = "tabularx"
+        width = r"{\textwidth}"
+        size = r"\footnotesize"
+        sep = "2.4pt"
+    elif ncol == 5:
+        colspec = (
+            r">{\raggedright\arraybackslash}p{0.26\textwidth}"
+            r">{\raggedright\arraybackslash}p{0.18\textwidth}"
+            r">{\centering\arraybackslash}p{0.15\textwidth}"
+            r">{\centering\arraybackslash}p{0.15\textwidth}"
+            r">{\centering\arraybackslash}p{0.14\textwidth}"
+        )
+        env = "longtable"
+        width = ""
+        size = r"\footnotesize\renewcommand{\arraystretch}{0.9}"
+        sep = "3.5pt"
+    elif ncol == 4:
+        colspec = r"l>{\raggedright\arraybackslash}Xll"
+        env = "tabularx"
+        width = r"{\textwidth}"
+        size = r"\small"
+        sep = "4pt"
+    else:
+        colspec = "l" * ncol
+        env = "tabular"
+        width = ""
+        size = r"\small"
+        sep = "6pt"
+    begin = rf"\begin{{{env}}}{width}{{{colspec}}}"
+    end = rf"\end{{{env}}}"
+    wrap = env != "longtable"
+    out = []
+    if wrap:
+        out.append(r"\begin{center}")
+    else:
+        out.append(r"{\centering")
+    out.extend(
+        [
+            size,
+            rf"\setlength{{\tabcolsep}}{{{sep}}}",
+            begin,
+            r"\toprule",
+        ]
+    )
     for ri, row in enumerate(rows):
         out.append(" & ".join(inline(c) for c in row) + r" \\")
         if ri == 0:
             out.append(r"\midrule")
     out.append(r"\bottomrule")
-    out.append(r"\end{tabular}")
-    out.append(r"\end{center}")
+    out.append(end)
+    if wrap:
+        out.append(r"\end{center}")
+    else:
+        out.append(r"}")
     return "\n".join(out) + "\n", i
 
 
@@ -165,11 +225,16 @@ PREAMBLE = r"""
 \usepackage{setspace}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
 \usepackage{amsmath,amssymb}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{needspace}
-\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue,breaklinks=true]{hyperref}
+\urlstyle{same}
 \setmainfont{Old Standard TT}[
   Path = fonts/,
   UprightFont = OldStandardTT-Regular.otf,
@@ -183,20 +248,25 @@ PREAMBLE = r"""
   BoldFont = OldStandardTT-Bold.otf,
   ItalicFont = OldStandardTT-Italic.otf
 ]
-\setmonofont{Old Standard TT}[
-  Path = fonts/,
-  UprightFont = OldStandardTT-Regular.otf,
-  Scale = 0.92
-]
+\IfFontExistsTF{Latin Modern Mono}{
+  \setmonofont{Latin Modern Mono}[Scale=0.86]
+}{
+  \setmonofont{Old Standard TT}[
+    Path = fonts/,
+    UprightFont = OldStandardTT-Regular.otf,
+    Scale = 0.90
+  ]
+}
 \setstretch{1.08}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.55em}
+\setlength{\parskip}{0.48em}
+\setlength{\emergencystretch}{3em}
 \setlist[itemize]{leftmargin=1.4em,itemsep=0.2em,topsep=0.3em}
 \pagestyle{plain}
 \renewcommand{\section}[1]{%
   \par\needspace{3\baselineskip}%
   {\fontsize{14}{17}\selectfont\bfseries #1\par}%
-  \vspace{0.35em}%
+  \vspace{0.28em}%
 }
 \begin{document}
 \begin{center}
@@ -204,19 +274,20 @@ PREAMBLE = r"""
 {\fontsize{20}{24}\selectfont\bfseries Presented Games and Wired Predicates\footnote{Research conducted at the \href{SPRINTURL}{AI Incident Response Sprint}, September 2026}}\\[0.45em]
 {\rule{\textwidth}{0.7pt}}\\[1.1em]
 {\fontsize{11}{14}\selectfont Akanksha Gupta}\\
-{\fontsize{11}{14}\selectfont 3am Labs}\\[1.15em]
+{\fontsize{11}{14}\selectfont 3am Labs}\\
+{\fontsize{11}{14}\selectfont \href{mailto:akanksha@3amlabs.ai}{akanksha@3amlabs.ai}}\\[1.0em]
 {\fontsize{11}{14}\selectfont\bfseries With}\\
-{\fontsize{11}{14}\selectfont Apart Research}\\[1.35em]
+{\fontsize{11}{14}\selectfont Apart Research}\\[1.2em]
 {\fontsize{14}{17}\selectfont\bfseries Abstract}
 \end{center}
-\vspace{0.2em}
+\vspace{0.15em}
 \begin{center}
 \begin{minipage}{0.92\textwidth}
 \itshape
 ABSTRACTBODY
 \end{minipage}
 \end{center}
-\vspace{0.7em}
+\vspace{0.55em}
 """.replace("SPRINTURL", SPRINT_URL)
 
 
@@ -265,7 +336,7 @@ def convert() -> str:
         if line.strip().startswith("![") and "](" in line:
             flush_para()
             body.append(
-                r"\begin{center}\includegraphics[width=\textwidth]{figure1_taglaw.png}\end{center}"
+                r"\begin{center}\includegraphics[width=0.92\textwidth,keepaspectratio]{figure1_taglaw.png}\end{center}"
                 + "\n"
             )
             i += 1

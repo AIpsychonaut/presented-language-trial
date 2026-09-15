@@ -27,6 +27,8 @@ Windows: `copy .env.example .env`. Unix: `cp .env.example .env`.
 
 `pytest` does not call the API.
 
+Rendered Table 1, Table 2, and Figure 1 (the submitted PDF layout was broken; this copy is authoritative) are in [paper/TABLES.md](paper/TABLES.md).
+
 ## Cell
 
 Same item both arms. Inject writes the item-specific G string at π_tool (mock tool note). Omit pads to the same character count with filler that is not a named method. Both arms share one SYSTEM grammar per call: empty lemma allowed (`optional_v0`) or lemma tag required with `None` allowed (`mandatory_structure`). The inject arm does not get an extra instruction to emit the tag. Official W requires the frozen needle after R=1; `None` scores 0. W=0 is a legal reject.

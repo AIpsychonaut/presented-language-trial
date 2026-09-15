@@ -1,49 +1,73 @@
 # Presented Games and Wired Predicates
 
-SOURCE=`api`. N=5 MATH items × omit vs inject × two SYSTEM grammars (20 live calls). Wired R is the answer box. Official W is a named lemma in the `<lemma>` channel after the answer already passed. Token volume is logged and is not the official column.
+**3am Labs, With Apart Research**
 
-Clone without a key runs `pytest` and can replay integers from committed traces. `python -m src.run` is a live twenty-call fill (empty-lemma system prompt and required-tag system prompt). Completions sit beside the jsonl. Fixtures are not Table 1.
+[Paper (PDF)](paper/Presented_Games_and_Wired_Predicates.pdf) · [Paper (REPORT.pdf)](paper/REPORT.pdf) · [Tables (secondary)](paper/TABLES.md)
 
-Type rule (speech): if presented text L names G on an active locus, wire G or strip G from L. Logging W is not that reporting standard.
+Published evaluations still pair a named scoring procedure in the methods text with an implemented checker that inspects a narrower object: an answer string, a flag, or a unit test. Readers treat the printed name as a description of what was measured; the checker records only the object it was written to inspect. This repository holds a smaller measurement: five contest-mathematics items, each with a unique gold answer and a named method, presented to GPT-4o at temperature 0. One arm omitted the method name at a tool-shaped user note; the other inserted it, length-matched. After a correct answer, extra work \(W\) is a hit only if the method string appears inside a lemma field; the token None scores as a miss. When an empty lemma was allowed, only Vieta produced a named hit on inject with the answer held, and the telescoping item raised its answer score. When a lemma tag was required and None permitted, four items wrote the named method on inject with the answer held; the telescoping item wrote None on both arms. The grammar of the after-answer log changes whether the presented name appears once the answer is already correct.
 
-## Run
+## Results
+
+![Figure 1](paper/figure1_taglaw.png)
+
+**Figure 1.** Omit versus inject on five contest-mathematics items with GPT-4o at temperature 0. Each bar is 0 or 1. Left pair: answer-box pass (\(R\)). Right pair: named method inside the lemma after a passing answer (official \(W\)). Panel A: empty lemma permitted. Panel B: lemma tag required, None permitted. On the telescoping item in Panel A, omit missed the answer and inject hit it. Live API, 14 September 2026, 08:37 UTC. Missing bars are zeros.
+
+Submitted PDF tables were misaligned; the renderings below are the frozen counts from `traces/api_taglaw_20260914T083741Z.jsonl`.
+
+**Table 1.** Lemma tag required, None permitted. Official extra work \(W\) = named method inside the lemma after a passing answer; None counts as 0. GPT-4o, temperature 0, twenty-call matrix dated 14 September 2026, 08:37 UTC.
+
+| item | omit answer \(R\) | inject answer \(R\) | omit \(W\) | inject \(W\) |
+|---|---|---|---|---|
+| AM-GM | 1 | 1 | 0 | 1 |
+| Euclid | 1 | 1 | 0 | 1 |
+| Inclusion-Exclusion | 1 | 1 | 0 | 1 |
+| Telescoping | 1 | 1 | 0 | 0 |
+| Vieta | 1 | 1 | 0 | 1 |
+
+**Table 2.** Empty lemma permitted, contemporaneous copy on the same twenty calls.
+
+| item | omit answer \(R\) | inject answer \(R\) | omit \(W\) | inject \(W\) |
+|---|---|---|---|---|
+| AM-GM | 1 | 1 | 0 | 0 |
+| Euclid | 1 | 1 | 0 | 0 |
+| Inclusion-Exclusion | 1 | 1 | 0 | 0 |
+| Telescoping | 0 | 1 | 0 | 0 |
+| Vieta | 1 | 1 | 0 | 1 |
+
+Lemma strings, verdict labels, and diagnostic bits are in [paper/TABLES.md](paper/TABLES.md) and [paper/REPORT.md](paper/REPORT.md). Integers are raw 0/1. Do not average verdicts.
+
+## Reproduce
+
+Clone without credentials runs `pytest` and can replay the integers from committed traces. `python -m src.run` is a live twenty-call fill.
 
 ```bash
-git clone <this-repo>
+git clone https://github.com/AIpsychonaut/presented-language-trial
 cd presented-language-trial
 pip install -e .
 copy .env.example .env
-```
-
-Paste an API key (`yk_live_…`) into `.env` as `OPENAI_API_KEY=`. Then:
-
-```bash
 python -m src.run
 ```
 
-Gateway: `https://api.aitklabs.in/v1`. Frozen `MODEL_ID=openai/gpt-4o` (`/v1/models` catalog and [apikeys.in docs](https://apikeys.in/docs.html)). Never `model=auto`. Confirm the slug on the [Models page](https://apikeys.in/models.html) if the catalog moves.
+On Unix, use `cp .env.example .env`. Keep `MODEL_ID=openai/gpt-4o`. Do not commit `.env`. Unit tests do not call the API.
 
-Windows: `copy .env.example .env`. Unix: `cp .env.example .env`.
+Frozen traces: `traces/api_taglaw_20260914T083741Z.jsonl` and the paired `_completions.jsonl`. Item bank: `items/bank.json`. Protocol: `PROTOCOL.md` and `freeze/protocol_v0.1-tag-law.json`. Official scorer: `src/w_hooks.py`. Figure: `python paper/make_figure1.py`.
 
-`pytest` does not call the API.
+## Dual-use
 
-Rendered Table 1, Table 2, and Figure 1 (the submitted PDF layout was broken; this copy is authoritative) are in [paper/TABLES.md](paper/TABLES.md).
+The item bank is public contest mathematics of the MATH class only. The treatment is a length-matched insert or omission of a named lemma string at a tool-shaped user note. The wired predicate is an answer box. Host how-tos, dataset names as items, and sandbox recipes are out of this bank.
 
-## Cell
+## Citation
 
-Same item both arms. Inject writes the item-specific G string at π_tool (mock tool note). Omit pads to the same character count with filler that is not a named method. Both arms share one SYSTEM grammar per call: empty lemma allowed (`optional_v0`) or lemma tag required with `None` allowed (`mandatory_structure`). The inject arm does not get an extra instruction to emit the tag. Official W requires the frozen needle after R=1; `None` scores 0. W=0 is a legal reject.
-
-Table 1 is the live stamp in `traces/` (`SOURCE=api`, protocol file `freeze/protocol_v0.1-tag-law.json`). Do not average verdicts.
-
-## Layout
-
-```text
-PROTOCOL.md
-freeze/protocol.json
-freeze/protocol_v0.1-tag-law.json
-src/run.py
-items/bank.json
-traces/
+```bibtex
+@misc{presented-games-wired-predicates-2026,
+  title        = {Presented Games and Wired Predicates},
+  author       = {{3am Labs}},
+  year         = {2026},
+  howpublished = {\url{https://github.com/AIpsychonaut/presented-language-trial}},
+  note         = {With Apart Research}
+}
 ```
 
-Authors: 3am Labs, With Apart Research. MIT.
+## License
+
+[MIT](LICENSE)
